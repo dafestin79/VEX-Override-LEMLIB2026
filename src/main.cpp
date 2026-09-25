@@ -6,8 +6,11 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motors
-pros::MotorGroup left_motors({1, -2}, pros::MotorGearset::blue); // left motors on ports 1, 2
-pros::MotorGroup right_motors({10, -12}, pros::MotorGearset::blue); // right motors on ports 10, 12
+// Left side: Port 1 forward, Port 2 forward
+pros::MotorGroup left_motors({-1, -2}, pros::v5::MotorGears::blue); 
+
+// Right side: Port 10 reversed, Port 12 reversed
+pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
 
 // IMU
 // pros::Imu imu(0);
@@ -166,12 +169,13 @@ void opcontrol() {
 	*/
 
 	while (true) {
-        // get left y and right x positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        // Left stick UP/DOWN -> throttle -> 
+        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        // Right stick LEFT/RIGHT -> turn - tried changing from right x
+        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-        // move the robot
-        chassis.arcade(leftY, rightX);
+        // arcade drive
+        chassis.arcade(throttle, turn);
 
         // delay to save resources
         pros::delay(25);
