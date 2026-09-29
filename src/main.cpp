@@ -6,11 +6,15 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motors
-// Left side: Port 1 forward, Port 2 forward
+
+// Left side: Port 1 reversed, Port 2 reversed
 pros::MotorGroup left_motors({-1, -2}, pros::v5::MotorGears::blue); 
 
-// Right side: Port 10 reversed, Port 12 reversed
+// Right side: Port 10, Port 12
 pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
+
+// Intake motors
+pros::Motor intake_motor(-7, pros::v5::MotorGears::green);
 
 // IMU
 // pros::Imu imu(0);
@@ -177,6 +181,14 @@ void opcontrol() {
         // arcade drive
         chassis.arcade(throttle, turn);
 
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            intake_motor.move(127);   // Spin full speed forward (intake in)
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+            intake_motor.move(-127);   // Spin full speed backward (intake out)
+        } else {
+            intake_motor.move(0);     // Stop intake when no button is held
+        }
+        
         // delay to save resources
         pros::delay(25);
     }
