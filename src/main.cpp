@@ -16,6 +16,10 @@ pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
 // Intake motors
 pros::Motor intake_motor(-7, pros::v5::MotorGears::green);
 
+// Pneumatics -> | A - port, False - default state (retracted)
+// pros::adi::Pneumatics clamp('A', false);
+bool clamp_extended = false;
+
 // Elevator motors - ADJUST ports and gearset
 // pros::MotorGroup elevator_motors({5, -6}, pros::MotorGearset::red);
 
@@ -184,14 +188,21 @@ void opcontrol() {
         // arcade drive
         chassis.arcade(throttle, turn);
 
+        // INTAKE CONTROL
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake_motor.move(127);   // Spin full speed forward (intake in)
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            pros::lcd::print(1, "R2 pressed");
+            pros::lcd::print(3, "R2 pressed");
             intake_motor.move(-127);   // Spin full speed backward (intake out)
         } else {
             intake_motor.move(0);     // Stop intake when no button is held
         }
+
+        // PNEUMATICS CONTROL
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+        //     clamp_extended = !clamp_extended; // Flip state
+        //     clamp.set_value(clamp_extended);  // Send signal
+        // }
         
         // delay to save resources
         pros::delay(25);
