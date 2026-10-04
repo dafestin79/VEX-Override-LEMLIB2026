@@ -21,7 +21,12 @@ pros::adi::Pneumatics clamp('A', false);
 //bool clamp_extended = false;
 
 // Elevator motors - ADJUST ports and gearset
-// pros::MotorGroup elevator_motors({5, -6}, pros::MotorGearset::red);
+
+// Full Motors Group
+// pros::MotorGroup full_motors({0, 0}, pros::v5::MotorGears::red);
+
+// Half Motors Group 
+// pros::MotorGroup half_motors({0, 0}, pros::v5::MotorGears::green);
 
 // IMU
 // pros::Imu imu(0);
@@ -112,6 +117,10 @@ void initialize() {
             pros::delay(20);
         }
     });
+
+    // Set brake mode for motor groups
+    // full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -199,8 +208,27 @@ void opcontrol() {
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+            pros::lcd::print(3, "Y pressed");
             clamp.toggle(); // toggle the clamp state
         }
+
+        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        //     full_motors.move(127);  // Full speed Up
+        // } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        //     full_motors.move(-127); // Full speed Down
+        // } else {
+        //     full_motors.move(0);    // Hold position
+        // }
+
+        // FULL MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
+        // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        //     half_motors.move(127);  // Full speed Up
+        // } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+        //     half_motors.move(-127); // Full speed Down
+        // } else {
+        //     half_motors.move(0);    // Hold position
+        // }
         
         // delay to save resources
         pros::delay(25);
