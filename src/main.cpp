@@ -23,10 +23,10 @@ pros::adi::Pneumatics clamp('A', false);
 // Elevator motors - ADJUST ports and gearset
 
 // Full Motors Group
-// pros::MotorGroup full_motors({0, 0}, pros::v5::MotorGears::red);
+pros::MotorGroup full_motors({5, 6}, pros::v5::MotorGears::red);
 
 // Half Motors Group 
-// pros::MotorGroup half_motors({0, 0}, pros::v5::MotorGears::green);
+pros::MotorGroup half_motors({3, 4}, pros::v5::MotorGears::green);
 
 // IMU
 // pros::Imu imu(0);
@@ -213,22 +213,22 @@ void opcontrol() {
         }
 
         // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
-        // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-        //     full_motors.move(127);  // Full speed Up
-        // } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        //     full_motors.move(-127); // Full speed Down
-        // } else {
-        //     full_motors.move(0);    // Hold position
-        // }
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+            full_motors.move(127);  // Full speed Up
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+            full_motors.move(-127); // Full speed Down
+        } else {
+            full_motors.move(0);    // Hold position
+        }
 
-        // FULL MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
-        // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-        //     half_motors.move(127);  // Full speed Up
-        // } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        //     half_motors.move(-127); // Full speed Down
-        // } else {
-        //     half_motors.move(0);    // Hold position
-        // }
+        // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+            half_motors.move(127);  // Full speed Up
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            half_motors.move(-127); // Full speed Down
+        } else {
+            half_motors.move(0);    // Hold position
+        }
         
         // delay to save resources
         pros::delay(25);
