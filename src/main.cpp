@@ -243,35 +243,35 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	/*
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+    /*
+    pros::Controller master(pros::E_CONTROLLER_MASTER);
+    pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+    pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+    while (true) {
+        pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+                         (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+                         (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+        // Arcade control scheme
+        int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
+        int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
+        left_mg.move(dir - turn);                      // Sets left motor voltage
+        right_mg.move(dir + turn);                     // Sets right motor voltage
+        pros::delay(20);                               // Run for 20 ms then update
+    }
+    */
+    bool armrunningu=false;
+    bool armrunningd=false; 
+    bool elevator_runu=false; 
+    bool elevator_rund=false;
+    bool piston_extended=false;
 
-
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
-
-		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
-		pros::delay(20);                               // Run for 20 ms then update
-	}
-	*/
-
-	while (true) {
+    while (true) {
         // Left stick UP/DOWN -> throttle 
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         // Right stick LEFT/RIGHT -> turn 
         int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
         // arcade drive
         chassis.arcade(throttle, turn);
-
         // INTAKE CONTROL
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake_motor.move(127);   // Spin full speed forward (intake in)
@@ -281,32 +281,49 @@ void opcontrol() {
         } else {
             intake_motor.move(0);     // Stop intake when no button is held
         }
-
         // PNEUMATICS CONTROL -> A Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-            pros::lcd::print(3, "A pressed");
-            clamp.toggle(); // toggle the clamp state
+           piston_extended=!piston_extended; // toggle the piston state
+           if(piston_extended==false) {
+                clamp.extend(); // extend the piston
+           }else{
+                clamp.retract(); // retract the piston
+           }
         }
-
-        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2) | ELEVATOR
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-            full_motors.move(127);  // Full speed Up
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-            full_motors.move(-127); // Full speed Down
-        } else {
-            full_motors.move(0);    // Hold position
+        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+            elevator_runu=!elevator_runu;
+            elevator_rund=false;
         }
-
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+            elevator_rund=!elevator_rund;
+            elevator_runu=false;
+        }
+        if(elevator_runu==true){
+            full_motors.move(127);
+        }else if(elevator_rund==true){
+            full_motors.move(-127);
+        }else{
+            full_motors.brake();
+        }
+       
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-            half_motors.move(127);  // Full speed Up
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-            half_motors.move(-127); // Full speed Down
-        } else {
-            half_motors.move(0);    // Hold position
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+            armrunningu=!armrunningu;
+            armrunningd=false;
         }
-        
+    if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+            armrunningd=!armrunningd;
+            armrunningu=false;
+        }
+        if(armrunningu==true){
+            half_motors.move(127);
+        }else if(armrunningd==true){
+            half_motors.move(-127);
+        }else{
+            half_motors.brake();
+        }
         // delay to save resources
-        pros::delay(25);
+        pros::delay(10);
     }
 }
