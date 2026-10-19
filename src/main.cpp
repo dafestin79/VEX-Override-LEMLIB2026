@@ -169,8 +169,11 @@ void preloadScoreSkills() {
 
     // Move to scoring position
     chassis.moveToPoint(48, 18, 1000, {.forwards = true, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
     // Open/release the claw to score the preloaded element
     clamp.set_value(false); 
+    pros::delay(300);
 
     // Drive to park
     chassis.moveToPoint(5, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
@@ -214,38 +217,47 @@ void complexSkills() {
 
     // TURN TO HEADING 90 DEGREES
     chassis.turnToHeading(90, 800); 
+    chassis.waitUntilDone();
 
     // ALIGN WITH GOAL AND CONE
     chassis.moveToPoint(24, 28, 1200, {.maxSpeed = 80});
+    chassis.waitUntilDone();
 
     // HEADING 0 DEGREES
     chassis.turnToHeading(0, 800); 
+    chassis.waitUntilDone();
 
     // RUN INTAKE
     intake_motor.move(127);
 
     // TURN AROUND
     chassis.turnToHeading(180, 800); 
+    chassis.waitUntilDone();
 
     // SCORE CONE
     chassis.turnToHeading(90, 800); 
+    chassis.waitUntilDone();
 
     // MOVE DOWN
     chassis.moveToPoint(24, -48, 1200, {.maxSpeed = 80});
+    chassis.waitUntilDone();
 
     // TURN TO FACE YELLOW PIN
     chassis.turnToHeading(0, 800); 
+    chassis.waitUntilDone();
 
     // RUN INTAKE
     intake_motor.move(127);
 
     // REVERSE
     chassis.turnToHeading(180, 800); 
+    chassis.waitUntilDone();
 
     // SCORE
 
     // PARKING
     chassis.moveToPoint(0, 0, 1500, {.maxSpeed = 70});
+    chassis.waitUntilDone();
     
 }
 
