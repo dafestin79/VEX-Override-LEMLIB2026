@@ -136,29 +136,49 @@ void parkingSkills() {
     chassis.waitUntilDone();
 }
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
-void competition_initialize() {}
+// PRELOAD SCORE AUTON
+void preloadScoreSkills() {
+    clamp.set_value(true); // Set to true to hold preload
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous() {
+    // Initial Position -> Adjust coordinates 
+    chassis.setPose(60, 0, 0); 
+
+    // Drive forward
+    chassis.moveToPoint(55, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive back into toggle
+    chassis.moveToPoint(60, 0, 800, {.forwards = true, .maxSpeed = 70}); 
+    chassis.waitUntilDone();
+
+    // Drive forward 
+    chassis.moveToPoint(55, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive back into toggle
+    chassis.moveToPoint(60, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive forward to align with goal
+    chassis.moveToPoint(48, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Turn 90 degrees counterclockwise
+    chassis.turnToHeading(-90, 800);
+    chassis.waitUntilDone();
+
+    // Move to scoring position
+    chassis.moveToPoint(48, 18, 1000, {.forwards = true, .maxSpeed = 80}); 
+    // Open/release the claw to score the preloaded element
+    clamp.set_value(false); 
+
+    // Drive to park
+    chassis.moveToPoint(5, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+}
+
+// 3 Pin auton
+void complexSkills() {
     clamp.set_value(true); // Set to true to hold preload
 
     // Initial Position -> Adjust coordinates 
@@ -230,6 +250,34 @@ void autonomous() {
 }
 
 /**
+ * Runs after initialize(), and before autonomous when connected to the Field
+ * Management System or the VEX Competition Switch. This is intended for
+ * competition-specific initialization routines, such as an autonomous selector
+ * on the LCD.
+ *
+ * This task will exit when the robot is enabled and autonomous or opcontrol
+ * starts.
+ */
+void competition_initialize() {}
+
+/**
+ * Runs the user autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the autonomous
+ * mode. Alternatively, this function may be called in initialize or opcontrol
+ * for non-competition testing purposes.
+ *
+ * If the robot is disabled or communications is lost, the autonomous task
+ * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * from where it left off.
+ */
+void autonomous() {
+    // Uncomment the desired autonomous routine
+    // parkingSkills();
+    // preloadScoreSkills();
+    // complexSkills();
+}
+/**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
  * the Field Management System or the VEX Competition Switch in the operator
@@ -272,6 +320,7 @@ void opcontrol() {
         int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         // arcade drive
         chassis.arcade(throttle, turn);
+
         // INTAKE CONTROL
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake_motor.move(127);   // Spin full speed forward (intake in)
@@ -281,6 +330,7 @@ void opcontrol() {
         } else {
             intake_motor.move(0);     // Stop intake when no button is held
         }
+
         // PNEUMATICS CONTROL -> A Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
            piston_extended=!piston_extended; // toggle the piston state
@@ -290,6 +340,7 @@ void opcontrol() {
                 clamp.retract(); // retract the piston
            }
         }
+
         // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
             elevator_runu=!elevator_runu;
