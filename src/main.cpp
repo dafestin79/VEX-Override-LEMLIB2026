@@ -141,7 +141,6 @@ void parkingSkills() {
 }
 
 // PRELOAD SCORE AUTON
-// PRELOAD SCORE AUTON
 void preloadScoreSkills() {
     clamp.extend(); // Set to true to hold preload
 
@@ -308,8 +307,6 @@ void complexSkills() {
     pros::delay(1100);
     left_motors.brake();
     right_motors.brake();
-
-    // SCORE
 
     // PARKING
     left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
