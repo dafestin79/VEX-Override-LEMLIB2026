@@ -206,13 +206,13 @@ void opcontrol() {
             intake_motor.move(0);     // Stop intake when no button is held
         }
 
-        // PNEUMATICS CONTROL -> Y Toggle
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-            pros::lcd::print(3, "Y pressed");
+        // PNEUMATICS CONTROL -> A Toggle
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            pros::lcd::print(3, "A pressed");
             clamp.toggle(); // toggle the clamp state
         }
 
-        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2) | ELEVATOR
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             full_motors.move(127);  // Full speed Up
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
