@@ -151,7 +151,76 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+    clamp.set_value(true); // Set to true to hold preload
+
+    // Initial Position -> Adjust coordinates 
+    chassis.setPose(55, 0, 0); 
+
+    // Drive forward into toggle 
+    chassis.moveToPoint(60, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive back 
+    chassis.moveToPoint(52, 0, 800, {.forwards = true, .maxSpeed = 70}); 
+    chassis.waitUntilDone();
+
+    // Drive forward into toggle
+    chassis.moveToPoint(60, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive back
+    chassis.moveToPoint(55, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
+    chassis.waitUntilDone();
+
+    // Drive to next point
+    chassis.turnToHeading(45, 800); 
+    chassis.waitUntilDone();
+
+    // Drive forward to the target goal coordinates
+    chassis.moveToPoint(24, 24, 1200, {.maxSpeed = 80});
+    chassis.waitUntilDone();
+
+    // Open/release the claw to score the preloaded element
+    clamp.set_value(false); 
+    pros::delay(300);
+
+    // TURN TO HEADING 90 DEGREES
+    chassis.turnToHeading(90, 800); 
+
+    // ALIGN WITH GOAL AND CONE
+    chassis.moveToPoint(24, 28, 1200, {.maxSpeed = 80});
+
+    // HEADING 0 DEGREES
+    chassis.turnToHeading(0, 800); 
+
+    // RUN INTAKE
+    intake_motor.move(127);
+
+    // TURN AROUND
+    chassis.turnToHeading(180, 800); 
+
+    // SCORE CONE
+    chassis.turnToHeading(90, 800); 
+
+    // MOVE DOWN
+    chassis.moveToPoint(24, -48, 1200, {.maxSpeed = 80});
+
+    // TURN TO FACE YELLOW PIN
+    chassis.turnToHeading(0, 800); 
+
+    // RUN INTAKE
+    intake_motor.move(127);
+
+    // REVERSE
+    chassis.turnToHeading(180, 800); 
+
+    // SCORE
+
+    // PARKING
+    chassis.moveToPoint(0, 0, 1500, {.maxSpeed = 70});
+    
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
