@@ -126,7 +126,7 @@ void parkingSkills() {
 
 // PRELOAD SCORE AUTON
 void preloadScoreSkills() {
-    clamp.set_value(true); // Set to true to hold preload
+    clamp.extend(); // Set to true to hold preload
 
     // Initial Position -> Adjust coordinates 
     chassis.setPose(60, 0, 0); 
@@ -160,7 +160,7 @@ void preloadScoreSkills() {
     chassis.waitUntilDone();
 
     // Open/release the claw to score the preloaded element
-    clamp.set_value(false); 
+    clamp.retract(); 
     pros::delay(300);
 
     // Drive to park
@@ -170,7 +170,7 @@ void preloadScoreSkills() {
 
 // 3 Pin auton
 void complexSkills() {
-    clamp.set_value(true); // Set to true to hold preload
+    clamp.extend(); // Set to true to hold preload
 
     // Initial Position -> Adjust coordinates 
     chassis.setPose(55, 0, 0); 
@@ -200,7 +200,7 @@ void complexSkills() {
     chassis.waitUntilDone();
 
     // Open/release the claw to score the preloaded element
-    clamp.set_value(false); 
+    clamp.retract(); 
     pros::delay(300);
 
     // TURN TO HEADING 90 DEGREES
