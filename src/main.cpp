@@ -129,6 +129,13 @@ void initialize() {
  */
 void disabled() {}
 
+// SIMPLE PARKING AUTON
+void parkingSkills() {
+    chassis.setPose(48, 0, 0); 
+    chassis.moveToPoint(0, 0, 2000, {.maxSpeed = 70});
+    chassis.waitUntilDone();
+}
+
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
