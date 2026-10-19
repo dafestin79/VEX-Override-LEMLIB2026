@@ -1,36 +1,24 @@
 #include "main.h"
-
 #include "lemlib/api.hpp" // IWYU pragma: keep
-
+#include "pros/misc.h"
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-
 // motors
-
 // Left side: Port 1 reversed, Port 2 reversed
 pros::MotorGroup left_motors({-1, -2}, pros::v5::MotorGears::blue); 
-
 // Right side: Port 10, Port 12
 pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
-
 // Intake motors
-pros::Motor intake_motor(-7, pros::v5::MotorGears::green);
-
+pros::Motor intake_motor(-6, pros::v5::MotorGears::green);
 // Pneumatics -> | A - PORT, False - default state (retracted)
 pros::adi::Pneumatics clamp('A', false);
-//bool clamp_extended = false;
-
 // Elevator motors - ADJUST ports and gearset
-
 // Full Motors Group
-pros::MotorGroup full_motors({5, 6}, pros::v5::MotorGears::red);
-
+pros::MotorGroup full_motors({17, 20}, pros::v5::MotorGears::green);
 // Half Motors Group 
-pros::MotorGroup half_motors({3, 4}, pros::v5::MotorGears::green);
-
+pros::MotorGroup half_motors({18, -19}, pros::v5::MotorGears::green);
 // IMU
 // pros::Imu imu(0);
-
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
