@@ -107,8 +107,8 @@ void initialize() {
     });
 
     // Set brake mode for motor groups
-    // full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    // half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -274,7 +274,7 @@ void competition_initialize() {}
 void autonomous() {
     // Uncomment the desired autonomous routine
     // parkingSkills();
-    // preloadScoreSkills();
+    preloadScoreSkills();
     // complexSkills();
 }
 /**
