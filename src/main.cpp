@@ -1,20 +1,26 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "pros/misc.h"
-// controller
+
+// Controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
-// motors
-// Left side: Port 1 reversed, Port 2 reversed
+
+// Motors
+
+// Left Drive Motors
 pros::MotorGroup left_motors({-1, -2}, pros::v5::MotorGears::blue); 
-// Right side: Port 10, Port 12
+// Right Drive Motors
 pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
-// Intake motors
+
+// Intake Motors
 pros::Motor intake_motor(-6, pros::v5::MotorGears::green);
-// Pneumatics -> | A - PORT, False - default state (retracted)
+
+// Pneumatics | A - CONNECTION, False - default state (retracted)
 pros::adi::Pneumatics clamp('A', false);
-// Elevator motors - ADJUST ports and gearset
-// Full Motors Group
+
+// Elevator Motor Group
 pros::MotorGroup full_motors({17, 20}, pros::v5::MotorGears::green);
+
 // Half Motors Group 
 pros::MotorGroup half_motors({18, -19}, pros::v5::MotorGears::green);
 // IMU
@@ -119,53 +125,81 @@ void disabled() {}
 
 // SIMPLE PARKING AUTON
 void parkingSkills() {
-    chassis.setPose(48, 0, 0); 
-    chassis.moveToPoint(0, 0, 2000, {.maxSpeed = 70});
-    chassis.waitUntilDone();
+    // Set brake mode to hold
+    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    left_motors.move(95); 
+    right_motors.move(95);
+
+    // Run for 3 seconds
+    pros::delay(3000);
+
+    // Stop and lock motors
+    left_motors.brake();
+    right_motors.brake();
 }
 
+// PRELOAD SCORE AUTON
 // PRELOAD SCORE AUTON
 void preloadScoreSkills() {
     clamp.extend(); // Set to true to hold preload
 
     // Initial Position -> Adjust coordinates 
-    chassis.setPose(60, 0, 0); 
+    // chassis.setPose(60, 0, 0); 
 
     // Drive forward
-    chassis.moveToPoint(55, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(400);
 
     // Drive back into toggle
-    chassis.moveToPoint(60, 0, 800, {.forwards = true, .maxSpeed = 70}); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(89);
+    pros::delay(500);
 
     // Drive forward 
-    chassis.moveToPoint(55, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(400);
 
     // Drive back into toggle
-    chassis.moveToPoint(60, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(600);
 
     // Drive forward to align with goal
-    chassis.moveToPoint(48, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(700);
 
     // Turn 90 degrees counterclockwise
-    chassis.turnToHeading(-90, 800);
-    chassis.waitUntilDone();
+    left_motors.move(-89);
+    right_motors.move(89);
+    pros::delay(550);
+    left_motors.brake();
+    right_motors.brake();
+    pros::delay(100);
 
     // Move to scoring position
-    chassis.moveToPoint(48, 18, 1000, {.forwards = true, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(800);
 
     // Open/release the claw to score the preloaded element
+    left_motors.brake();
+    right_motors.brake();
     clamp.retract(); 
     pros::delay(300);
 
     // Drive to park
-    chassis.moveToPoint(5, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(1200);
+    left_motors.brake();
+    right_motors.brake();
 }
 
 // 3 Pin auton
@@ -173,80 +207,118 @@ void complexSkills() {
     clamp.extend(); // Set to true to hold preload
 
     // Initial Position -> Adjust coordinates 
-    chassis.setPose(55, 0, 0); 
+    // chassis.setPose(55, 0, 0); 
 
     // Drive forward into toggle 
-    chassis.moveToPoint(60, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(600);
 
     // Drive back 
-    chassis.moveToPoint(52, 0, 800, {.forwards = true, .maxSpeed = 70}); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(89);
+    pros::delay(500);
 
     // Drive forward into toggle
-    chassis.moveToPoint(60, 0, 1000, {.forwards = false, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(600);
 
     // Drive back
-    chassis.moveToPoint(55, 0, 1000, {.forwards = true, .maxSpeed = 80}); 
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(500);
 
     // Drive to next point
-    chassis.turnToHeading(45, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(-89);
+    pros::delay(300);
+    left_motors.brake();
+    right_motors.brake();
 
     // Drive forward to the target goal coordinates
-    chassis.moveToPoint(24, 24, 1200, {.maxSpeed = 80});
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(900);
+    left_motors.brake();
+    right_motors.brake();
 
     // Open/release the claw to score the preloaded element
     clamp.retract(); 
     pros::delay(300);
 
     // TURN TO HEADING 90 DEGREES
-    chassis.turnToHeading(90, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(-89);
+    pros::delay(300);
+    left_motors.brake();
+    right_motors.brake();
 
     // ALIGN WITH GOAL AND CONE
-    chassis.moveToPoint(24, 28, 1200, {.maxSpeed = 80});
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(400);
+    left_motors.brake();
+    right_motors.brake();
 
     // HEADING 0 DEGREES
-    chassis.turnToHeading(0, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(-89);
+    right_motors.move(89);
+    pros::delay(550);
+    left_motors.brake();
+    right_motors.brake();
 
     // RUN INTAKE
     intake_motor.move(127);
 
     // TURN AROUND
-    chassis.turnToHeading(180, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(-89);
+    pros::delay(1100);
+    left_motors.brake();
+    right_motors.brake();
 
     // SCORE CONE
-    chassis.turnToHeading(90, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(-89);
+    right_motors.move(89);
+    pros::delay(550);
+    left_motors.brake();
+    right_motors.brake();
 
     // MOVE DOWN
-    chassis.moveToPoint(24, -48, 1200, {.maxSpeed = 80});
-    chassis.waitUntilDone();
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(1800);
+    left_motors.brake();
+    right_motors.brake();
 
     // TURN TO FACE YELLOW PIN
-    chassis.turnToHeading(0, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(-89);
+    right_motors.move(89);
+    pros::delay(550);
+    left_motors.brake();
+    right_motors.brake();
 
     // RUN INTAKE
     intake_motor.move(127);
 
     // REVERSE
-    chassis.turnToHeading(180, 800); 
-    chassis.waitUntilDone();
+    left_motors.move(89);
+    right_motors.move(-89);
+    pros::delay(1100);
+    left_motors.brake();
+    right_motors.brake();
 
     // SCORE
 
     // PARKING
-    chassis.moveToPoint(0, 0, 1500, {.maxSpeed = 70});
-    chassis.waitUntilDone();
-    
+    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    left_motors.move(89);
+    right_motors.move(89);
+    pros::delay(1200);
+    left_motors.brake();
+    right_motors.brake();
 }
 
 /**
@@ -341,7 +413,7 @@ void opcontrol() {
            }
         }
 
-        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        // ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
             elevator_runu=!elevator_runu;
             elevator_rund=false;
