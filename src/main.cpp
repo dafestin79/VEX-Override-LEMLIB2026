@@ -381,6 +381,7 @@ void opcontrol() {
     bool elevator_runu=false; 
     bool elevator_rund=false;
     bool piston_extended=false;
+    bool intake_running=false;
 
     while (true) {
         // Left stick UP/DOWN -> throttle 
@@ -391,15 +392,27 @@ void opcontrol() {
         chassis.arcade(throttle, turn);
 
         // INTAKE CONTROL
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            pros::lcd::print(3, "R1 pressed");
-            intake_motor.move(127);   // Spin full speed forward (intake in)
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            pros::lcd::print(3, "R2 pressed");
-            intake_motor.move(-127);   // Spin full speed backward (intake out)
-        } else {
-            intake_motor.move(0);     // Stop intake when no button is held
+        //if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            //pros::lcd::print(3, "R1 pressed");
+            //intake_motor.move(127);   // Spin full speed forward (intake in)
+        } //else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+         //   pros::lcd::print(3, "R2 pressed");
+           // intake_motor.move(-127);   // Spin full speed backward (intake out)
+        //} //else {
+          //  intake_motor.move(0);     // Stop intake when no button is held
+        //}
+
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
+            pros::lcd::print(3, "R1 pressed"); // Spin full speed forward (intake in)
+            intake_motor.move(127);
+            intake_running=true;
         }
+        if(controller.get_digital_new_release(pros::E_CONTROLLER_DIGITAL_R1)){
+            pros::lcd::print(3, "R1 released"); // Spin full speed forward (intake in)
+            intake_motor.move(0);
+            intake_running=false;
+        }
+        
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
