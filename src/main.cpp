@@ -404,7 +404,7 @@ void opcontrol() {
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
             pros::lcd::print(3, "Y pressed");
-           piston_extended = !piston_extended; // toggle the piston state
+            piston_extended = !piston_extended; // toggle the piston state
            if (piston_extended == false) {
                 clamp.extend(); // extend the piston
            } else {
