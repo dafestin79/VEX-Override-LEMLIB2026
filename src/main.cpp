@@ -392,6 +392,7 @@ void opcontrol() {
 
         // INTAKE CONTROL
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            pros::lcd::print(3, "R1 pressed");
             intake_motor.move(127);   // Spin full speed forward (intake in)
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             pros::lcd::print(3, "R2 pressed");
@@ -400,22 +401,25 @@ void opcontrol() {
             intake_motor.move(0);     // Stop intake when no button is held
         }
 
-        // PNEUMATICS CONTROL -> A Toggle
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-           piston_extended=!piston_extended; // toggle the piston state
-           if(piston_extended==false) {
+        // PNEUMATICS CONTROL -> Y Toggle
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+            pros::lcd::print(3, "Y pressed");
+           piston_extended = !piston_extended; // toggle the piston state
+           if (piston_extended == false) {
                 clamp.extend(); // extend the piston
-           }else{
+           } else {
                 clamp.retract(); // retract the piston
            }
         }
 
         // ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+            pros::lcd::print(3, "L1 pressed");
             elevator_runu=!elevator_runu;
             elevator_rund=false;
         }
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+            pros::lcd::print(3, "L2 pressed");
             elevator_rund=!elevator_rund;
             elevator_runu=false;
         }
@@ -429,6 +433,7 @@ void opcontrol() {
        
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+            pros::lcd::print(3, "Up pressed");
             armrunningu=!armrunningu;
             armrunningd=false;
         }
