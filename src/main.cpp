@@ -438,6 +438,7 @@ void opcontrol() {
             armrunningd=false;
         }
     if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+        pros::lcd::print(3, "Down pressed");
             armrunningd=!armrunningd;
             armrunningu=false;
         }
