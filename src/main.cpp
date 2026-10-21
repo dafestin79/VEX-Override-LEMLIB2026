@@ -123,6 +123,36 @@ void initialize() {
  */
 void disabled() {}
 
+// TOGGLE THEN PARK AUTON
+void toggleSkills() {
+    // Drive forward
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(600);
+
+    // Drive back into toggle
+    left_motors.move(89);
+    right_motors.move(89);
+    pros::delay(600);
+
+    // Drive forward 
+    left_motors.move(-102);
+    right_motors.move(-102);
+    pros::delay(600);
+
+    // Drive back into toggle
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(600);
+
+    // Drive to park
+    left_motors.move(102);
+    right_motors.move(102);
+    pros::delay(1200);
+    left_motors.brake();
+    right_motors.brake();
+
+}
 // SIMPLE PARKING AUTON
 void parkingSkills() {
     // Set brake mode to hold
@@ -343,7 +373,8 @@ void competition_initialize() {}
 void autonomous() {
     // Uncomment the desired autonomous routine
     // parkingSkills();
-    preloadScoreSkills();
+    // preloadScoreSkills();
+    toggleSkills();
     // complexSkills();
 }
 /**
