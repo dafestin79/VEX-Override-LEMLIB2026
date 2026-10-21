@@ -145,13 +145,6 @@ void toggleSkills() {
     right_motors.move(102);
     pros::delay(600);
 
-    // Drive to park
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(1200);
-    left_motors.brake();
-    right_motors.brake();
-
 }
 // SIMPLE PARKING AUTON
 void parkingSkills() {
