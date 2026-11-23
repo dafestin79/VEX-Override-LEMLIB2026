@@ -1,4 +1,5 @@
 #include "main.h"
+#include <cmath>
 
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "pros/misc.h"
