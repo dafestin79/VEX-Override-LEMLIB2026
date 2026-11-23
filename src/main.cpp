@@ -112,14 +112,20 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            pros::lcd::print(4, "Elev Pos: %.1f deg", full_motors.get_position()); // print elevator position
             // delay to save resources
             pros::delay(20);
         }
     });
 
     // Set brake mode for motor groups
-    // full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    // half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // Configure elevator encoders to degrees
+    full_motors.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+    // Set starting height to 0
+    full_motors.tare_position();
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -211,8 +217,7 @@ void opcontrol() {
     bool elevator_runu=false; 
     bool elevator_rund=false;
     bool piston_extended=false;
-    bool intake_in=false; 
-    bool intake_out=false;
+
 	while (true) {
         // Left stick UP/DOWN -> throttle 
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
