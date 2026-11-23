@@ -205,6 +205,9 @@ void opcontrol() {
     const int minLevel = 0; // Min level
     const int maxLevel = 3; // Max level
 
+    bool isMoving = false;
+    int moveTimer = 0;
+
     bool armrunningu=false;
     bool armrunningd=false; 
     bool elevator_runu=false; 
@@ -238,7 +241,6 @@ void opcontrol() {
                 pros::lcd::print(3, "Selected Level: %d", targetLevel);
             }
         }
-
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
             if (targetLevel > minLevel) {
                 targetLevel--;
@@ -246,12 +248,34 @@ void opcontrol() {
             }
         }
 
-        // Movement A
+        // Start movement (Button A)
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             if (targetLevel != currentLevel) {
-                moveElevator(targetLevel);
-                currentLevel = targetLevel;
-                pros::lcd::print(3, "Moving to Level: %d", currentLevel);
+                full_motors.move_absolute(levelPositions[targetLevel], 100);
+                isMoving = true;
+                moveTimer = 0; // Reset timer
+                pros::lcd::print(3, "Target Level: %d", targetLevel);
+            }
+        }
+
+        // Track motor
+        if (isMoving) {
+            double error = levelPositions[targetLevel] - full_motors.get_position();
+            moveTimer += 10; // Increse timer by 10ms
+
+            // Check if within 10 degrees of target
+            if (fabs(error) < 10.0) {
+                full_motors.brake();
+                currentLevel = targetLevel; // Update current level
+                isMoving = false;
+                pros::lcd::print(3, "Level: %d", currentLevel);
+            } 
+
+            // Timeout after 5 seconds
+            else if (moveTimer >= 5000) {
+                full_motors.brake();
+                isMoving = false;
+                pros::lcd::print(3, "elevator timeout!");
             }
         }
        
