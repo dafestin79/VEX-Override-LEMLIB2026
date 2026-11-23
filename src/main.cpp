@@ -230,24 +230,31 @@ void opcontrol() {
            }
         }
 
-        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-            elevator_runu = !elevator_runu;
-            elevator_rund = false;
+        // --- ELEVATOR LEVEL CONTROL ---
+        // L1 = UP, L2 = DOWN
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+            if (targetLevel < maxLevel) {
+                targetLevel++;
+                pros::lcd::print(3, "Selected Level: %d", targetLevel);
+            }
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-            elevator_rund = !elevator_rund;
-            elevator_runu = false;
+
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+            if (targetLevel > minLevel) {
+                targetLevel--;
+                pros::lcd::print(3, "Selected Level: %d", targetLevel);
+            }
         }
-        if (elevator_runu == true){
-            full_motors.move(127);
-        } else if (elevator_rund == true){
-            full_motors.move(-127);
-        } else {
-            full_motors.brake();
+
+        // Movement A
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            if (targetLevel != currentLevel) {
+                moveElevator(targetLevel);
+                currentLevel = targetLevel;
+                pros::lcd::print(3, "Moving to Level: %d", currentLevel);
+            }
         }
        
-
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
             armrunningu=!armrunningu;
@@ -264,6 +271,23 @@ void opcontrol() {
         } else {
             half_motors.brake();
         }
+
+        // // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+        //     elevator_runu = !elevator_runu;
+        //     elevator_rund = false;
+        // }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+        //     elevator_rund = !elevator_rund;
+        //     elevator_runu = false;
+        // }
+        // if (elevator_runu == true){
+        //     full_motors.move(127);
+        // } else if (elevator_rund == true){
+        //     full_motors.move(-127);
+        // } else {
+        //     full_motors.brake();
+        // }
 
         // delay to save resources
         pros::delay(10);
