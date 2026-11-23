@@ -414,17 +414,6 @@ void opcontrol() {
         // arcade drive
         chassis.arcade(throttle, turn);
 
-        // INTAKE CONTROL
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            pros::lcd::print(3, "R1 pressed");
-            intake_motor.move(127);   // Spin full speed forward (intake in)
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            pros::lcd::print(3, "R2 pressed");
-            intake_motor.move(-127);   // Spin full speed backward (intake out)
-        } else {
-            intake_motor.move(0);     // Stop intake when no button is held
-        }
-
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
             pros::lcd::print(3, "Y pressed");
