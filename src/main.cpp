@@ -125,7 +125,7 @@ void initialize() {
 
     // Configure elevator encoders to degrees
     full_motors.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-    // Set starting height to 0
+    // ASSUMES THAT WHEN ROBOT IS TURNED ON, ELEVATOR IS AT BOTTOM (0 degrees)
     full_motors.tare_position();
 }
 /**
@@ -180,6 +180,7 @@ void autonomous() {
     toggleSkills();
 }
 // UNTUNED -> CHECK LATER
+// 360 degrees -> One motor rotation
 const double levelPositions[4] = {0, 360, 720, 1080};
 
 void moveElevator(int destination) {
