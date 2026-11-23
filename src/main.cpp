@@ -1,30 +1,35 @@
 #include "main.h"
+
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "pros/misc.h"
 
-// Controller
+// controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
-// Motors
+// motors
 
-// Left Drive Motors
-pros::MotorGroup left_motors({-1, -2}, pros::v5::MotorGears::blue); 
-// Right Drive Motors
-pros::MotorGroup right_motors({10, 12}, pros::v5::MotorGears::blue);
+// Left side: Port 1 reversed, Port 2 reversed
+pros::MotorGroup left_motors({-1, -12}, pros::v5::MotorGears::blue); 
 
-// Intake Motors
+// Right side: Port 10, Port 12
+pros::MotorGroup right_motors({10, 14}, pros::v5::MotorGears::blue);
+
+// Intake motors
 pros::Motor intake_motor(-6, pros::v5::MotorGears::green);
 
-// Pneumatics | A - CONNECTION, False - default state (retracted)
+// Pneumatics -> | A - PORT, False - default state (retracted)
 pros::adi::Pneumatics clamp('A', false);
+// Elevator motors - ADJUST ports and gearset
 
-// Elevator Motor Group
+// Full Motors Group
 pros::MotorGroup full_motors({17, 20}, pros::v5::MotorGears::green);
 
 // Half Motors Group 
 pros::MotorGroup half_motors({18, -19}, pros::v5::MotorGears::green);
+
 // IMU
 // pros::Imu imu(0);
+
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors, // left motor group
                               &right_motors, // right motor group
@@ -113,8 +118,8 @@ void initialize() {
     });
 
     // Set brake mode for motor groups
-    full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -122,224 +127,6 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {}
-
-// TOGGLE THEN PARK AUTON
-void toggleSkills() {
-    // Drive forward
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(600);
-
-    // Drive back into toggle
-    left_motors.move(89);
-    right_motors.move(89);
-    pros::delay(600);
-
-    // Drive forward 
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(600);
-
-    // Drive back into toggle
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(600);
-
-}
-// SIMPLE PARKING AUTON
-void parkingSkills() {
-    // Set brake mode to hold
-    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-
-    left_motors.move(95); 
-    right_motors.move(95);
-
-    // Run for 3 seconds
-    pros::delay(3000);
-
-    // Stop and lock motors
-    left_motors.brake();
-    right_motors.brake();
-}
-
-// PRELOAD SCORE AUTON
-void preloadScoreSkills() {
-    clamp.extend(); // Set to true to hold preload
-
-    // Initial Position -> Adjust coordinates 
-    // chassis.setPose(60, 0, 0); 
-
-    // Drive forward
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(400);
-
-    // Drive back into toggle
-    left_motors.move(89);
-    right_motors.move(89);
-    pros::delay(500);
-
-    // Drive forward 
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(400);
-
-    // Drive back into toggle
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(600);
-
-    // Drive forward to align with goal
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(700);
-
-    // Turn 90 degrees counterclockwise
-    left_motors.move(-89);
-    right_motors.move(89);
-    pros::delay(550);
-    left_motors.brake();
-    right_motors.brake();
-    pros::delay(100);
-
-    // Move to scoring position
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(800);
-
-    // Open/release the claw to score the preloaded element
-    left_motors.brake();
-    right_motors.brake();
-    clamp.retract(); 
-    pros::delay(300);
-
-    // Drive to park
-    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(1200);
-    left_motors.brake();
-    right_motors.brake();
-}
-
-// 3 Pin auton
-void complexSkills() {
-    clamp.extend(); // Set to true to hold preload
-
-    // Initial Position -> Adjust coordinates 
-    // chassis.setPose(55, 0, 0); 
-
-    // Drive forward into toggle 
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(600);
-
-    // Drive back 
-    left_motors.move(89);
-    right_motors.move(89);
-    pros::delay(500);
-
-    // Drive forward into toggle
-    left_motors.move(-102);
-    right_motors.move(-102);
-    pros::delay(600);
-
-    // Drive back
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(500);
-
-    // Drive to next point
-    left_motors.move(89);
-    right_motors.move(-89);
-    pros::delay(300);
-    left_motors.brake();
-    right_motors.brake();
-
-    // Drive forward to the target goal coordinates
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(900);
-    left_motors.brake();
-    right_motors.brake();
-
-    // Open/release the claw to score the preloaded element
-    clamp.retract(); 
-    pros::delay(300);
-
-    // TURN TO HEADING 90 DEGREES
-    left_motors.move(89);
-    right_motors.move(-89);
-    pros::delay(300);
-    left_motors.brake();
-    right_motors.brake();
-
-    // ALIGN WITH GOAL AND CONE
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(400);
-    left_motors.brake();
-    right_motors.brake();
-
-    // HEADING 0 DEGREES
-    left_motors.move(-89);
-    right_motors.move(89);
-    pros::delay(550);
-    left_motors.brake();
-    right_motors.brake();
-
-    // RUN INTAKE
-    intake_motor.move(127);
-
-    // TURN AROUND
-    left_motors.move(89);
-    right_motors.move(-89);
-    pros::delay(1100);
-    left_motors.brake();
-    right_motors.brake();
-
-    // SCORE CONE
-    left_motors.move(-89);
-    right_motors.move(89);
-    pros::delay(550);
-    left_motors.brake();
-    right_motors.brake();
-
-    // MOVE DOWN
-    left_motors.move(102);
-    right_motors.move(102);
-    pros::delay(1800);
-    left_motors.brake();
-    right_motors.brake();
-
-    // TURN TO FACE YELLOW PIN
-    left_motors.move(-89);
-    right_motors.move(89);
-    pros::delay(550);
-    left_motors.brake();
-    right_motors.brake();
-
-    // RUN INTAKE
-    intake_motor.move(127);
-
-    // REVERSE
-    left_motors.move(89);
-    right_motors.move(-89);
-    pros::delay(1100);
-    left_motors.brake();
-    right_motors.brake();
-
-    // PARKING
-    left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    left_motors.move(89);
-    right_motors.move(89);
-    pros::delay(1200);
-    left_motors.brake();
-    right_motors.brake();
-}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -351,6 +138,25 @@ void complexSkills() {
  * starts.
  */
 void competition_initialize() {}
+
+void toggleSkills() {
+    // Drive forward
+    left_motors.move(50);
+    right_motors.move(50);
+    pros::delay(100);
+    // Drive back into toggle
+    left_motors.move(-50);
+    right_motors.move(-50);
+    pros::delay(100);
+    // Drive forward 
+    left_motors.move(50);
+    right_motors.move(50);
+    pros::delay(100);
+    // Drive back into toggle
+    left_motors.move(-50);
+    right_motors.move(-50);
+    pros::delay(100);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -364,12 +170,9 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    // Uncomment the desired autonomous routine
-    // parkingSkills();
-    // preloadScoreSkills();
     toggleSkills();
-    // complexSkills();
 }
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -384,84 +187,86 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    /*
-    pros::Controller master(pros::E_CONTROLLER_MASTER);
-    pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-    pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-    while (true) {
-        pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-                         (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-                         (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
-        // Arcade control scheme
-        int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-        int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-        left_mg.move(dir - turn);                      // Sets left motor voltage
-        right_mg.move(dir + turn);                     // Sets right motor voltage
-        pros::delay(20);                               // Run for 20 ms then update
-    }
-    */
+	/*
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+
+
+	while (true) {
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+
+		// Arcade control scheme
+		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
+		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
+		left_mg.move(dir - turn);                      // Sets left motor voltage
+		right_mg.move(dir + turn);                     // Sets right motor voltage
+		pros::delay(20);                               // Run for 20 ms then update
+	}
+	*/
     bool armrunningu=false;
     bool armrunningd=false; 
     bool elevator_runu=false; 
     bool elevator_rund=false;
     bool piston_extended=false;
-
-    while (true) {
+    bool intake_in=false; 
+    bool intake_out=false;
+	while (true) {
         // Left stick UP/DOWN -> throttle 
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         // Right stick LEFT/RIGHT -> turn 
         int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
         // arcade drive
         chassis.arcade(throttle, turn);
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-            pros::lcd::print(3, "Y pressed");
-            piston_extended = !piston_extended; // toggle the piston state
-           if (piston_extended == false) {
+           piston_extended=!piston_extended; // toggle the piston state
+           if (piston_extended==false) {
                 clamp.extend(); // extend the piston
            } else {
                 clamp.retract(); // retract the piston
            }
         }
 
-        // ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
+        // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-            pros::lcd::print(3, "L1 pressed");
-            elevator_runu=!elevator_runu;
-            elevator_rund=false;
+            elevator_runu = !elevator_runu;
+            elevator_rund = false;
         }
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-            pros::lcd::print(3, "L2 pressed");
-            elevator_rund=!elevator_rund;
-            elevator_runu=false;
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+            elevator_rund = !elevator_rund;
+            elevator_runu = false;
         }
-        if(elevator_runu==true){
+        if (elevator_runu == true){
             full_motors.move(127);
-        }else if(elevator_rund==true){
+        } else if (elevator_rund == true){
             full_motors.move(-127);
-        }else{
+        } else {
             full_motors.brake();
         }
        
+
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
         if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-            pros::lcd::print(3, "Up pressed");
             armrunningu=!armrunningu;
             armrunningd=false;
         }
-    if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-        pros::lcd::print(3, "Down pressed");
+        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
             armrunningd=!armrunningd;
             armrunningu=false;
         }
-        if(armrunningu==true){
-            half_motors.move(127);
-        }else if(armrunningd==true){
-            half_motors.move(-127);
-        }else{
+        if (armrunningu == true){
+            half_motors.move(40);
+        } else if(armrunningd == true) {
+            half_motors.move(-40);
+        } else {
             half_motors.brake();
         }
+
         // delay to save resources
         pros::delay(10);
     }
