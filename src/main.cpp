@@ -15,8 +15,9 @@ pros::MotorGroup left_motors({-1, -12}, pros::v5::MotorGears::blue);
 // Right side: Port 10, Port 12
 pros::MotorGroup right_motors({10, 14}, pros::v5::MotorGears::blue);
 
-// Intake motors
-pros::Motor intake_motor(-6, pros::v5::MotorGears::green);
+// TOGGLE motor
+pros::Motor toggle_motor(6, pros::v5::MotorGears::green);
+// pros::Motor intake_motor(6, pros::v5::MotorGears::green);
 
 // Pneumatics -> | A - PORT, False - default state (retracted)
 pros::adi::Pneumatics clamp('A', false);
@@ -123,10 +124,14 @@ void initialize() {
     full_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
+    // Set brake mode for toggle
+    toggle_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
     // Configure elevator encoders to degrees
     full_motors.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
     // ASSUMES THAT WHEN ROBOT IS TURNED ON, ELEVATOR IS AT BOTTOM (0 degrees)
     full_motors.tare_position();
+
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -226,13 +231,20 @@ void opcontrol() {
         chassis.arcade(throttle, turn);
 
         // PNEUMATICS CONTROL -> Y Toggle
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-           piston_extended=!piston_extended; // toggle the piston state
-           if (piston_extended==false) {
-                clamp.extend(); // extend the piston
-           } else {
-                clamp.retract(); // retract the piston
-           }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+        //    piston_extended=!piston_extended; // toggle the piston state
+        //    if (piston_extended==false) {
+        //         clamp.extend(); // extend the piston
+        //    } else {
+        //         clamp.retract(); // retract the piston
+        //    }
+        // }
+
+        // Toggle control -> Y Toggle
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+            toggle_motor.move(40); // Move toggle motor
+        } else {
+            toggle_motor.brake(); // Stop toggle motor
         }
 
         // --- ELEVATOR LEVEL CONTROL ---
