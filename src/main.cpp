@@ -187,7 +187,7 @@ void toggleSkills() {
 void driveSkills() {
     left_motors.move(30);
     right_motors.move(30);
-    pros::delay(200);
+    pros::delay(1500); // 1.5 seconds
 
     left_motors.brake();
     right_motors.brake();
