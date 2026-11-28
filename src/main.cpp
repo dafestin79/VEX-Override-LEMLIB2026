@@ -212,7 +212,7 @@ void autonomous() {
     //toggleSkills();
 
     // for midfield drive skills
-    driveSkills();
+    //driveSkills();
 }
 // UNTUNED -> CHECK LATER
 // 360 degrees -> One motor rotation
@@ -253,7 +253,7 @@ void opcontrol() {
 
 	while (true) {
         // 0.8 multipler scales down speed
-        
+
         // Left stick UP/DOWN -> throttle 
         int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * 0.8;
         // Right stick LEFT/RIGHT -> turn 
