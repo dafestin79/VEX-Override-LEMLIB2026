@@ -24,7 +24,7 @@ pros::adi::Pneumatics clamp('A', false);
 // Elevator motors - ADJUST ports and gearset
 
 // Full Motors Group
-pros::MotorGroup full_motors({17, -20}, pros::v5::MotorGears::green);
+pros::MotorGroup full_motors({17, 20}, pros::v5::MotorGears::green);
 
 // Half Motors Group 
 pros::MotorGroup half_motors({18, -19}, pros::v5::MotorGears::green);
@@ -166,7 +166,7 @@ void toggleSkills() {
     pros::delay(100);
     // Drive back into toggle
     left_motors.move(-30);
-    right_motors.move(30);
+    right_motors.move(-30);
     pros::delay(100);
 }
 
@@ -207,8 +207,8 @@ void moveElevator(int destination) {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	int currentLevel = 0; // Where the elevator is right now (0 to 3)
-    int targetLevel = 0; // The level to go to (0 to 3)
+	int currentLevel = 0; // Where the elevator is right now (0 to 2)
+    int targetLevel = 0; // The level to go to (0 to 2)
     const int minLevel = 0; // Min level
     const int maxLevel = 2; // Max level
 
@@ -232,16 +232,18 @@ void opcontrol() {
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-           piston_extended = !piston_extended; // toggle the piston state
-           if (piston_extended==false) {
-                clamp.extend(); // extend the piston
-           } else {
-                clamp.retract(); // retract the piston
-           }
+            pros::lcd::print(4, "y pressed: %d", targetLevel);
+            piston_extended = !piston_extended; // toggle the piston state
+            if (piston_extended==false) {
+                    clamp.extend(); // extend the piston
+            } else {
+                    clamp.retract(); // retract the piston
+            }
         }
 
         // Toggle control -> B Toggle
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+            pros::lcd::print(4, "b pressed: %d", targetLevel);
             toggle_motor.move(40); // Move toggle motor
         } else {
             toggle_motor.brake(); // Stop toggle motor
@@ -252,12 +254,14 @@ void opcontrol() {
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
             if (targetLevel < maxLevel) {
                 targetLevel++;
+                pros::lcd::print(4, "l1 pressed: %d", targetLevel);
                 pros::lcd::print(3, "Selected Level: %d", targetLevel);
             }
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
             if (targetLevel > minLevel) {
                 targetLevel--;
+                pros::lcd::print(4, "l2 pressed: %d", targetLevel);
                 pros::lcd::print(3, "Selected Level: %d", targetLevel);
             }
         }
@@ -265,6 +269,7 @@ void opcontrol() {
         // Start movement (Button A)
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             if (targetLevel != currentLevel) {
+                pros::lcd::print(4, "a pressed: %d", targetLevel);
                 full_motors.move_absolute(levelPositions[targetLevel], 100);
                 isMoving = true;
                 moveTimer = 0; // Reset timer
@@ -314,21 +319,21 @@ void opcontrol() {
         }
        
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-            armrunningu=!armrunningu;
-            armrunningd=false;
-        }
-        if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-            armrunningd=!armrunningd;
-            armrunningu=false;
-        }
-        if (armrunningu == true){
-            half_motors.move(40);
-        } else if(armrunningd == true) {
-            half_motors.move(-40);
-        } else {
-            half_motors.brake();
-        }
+        // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+        //     armrunningu=!armrunningu;
+        //     armrunningd=false;
+        // }
+        // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+        //     armrunningd=!armrunningd;
+        //     armrunningu=false;
+        // }
+        // if (armrunningu == true){
+        //     half_motors.move(40);
+        // } else if(armrunningd == true) {
+        //     half_motors.move(-40);
+        // } else {
+        //     half_motors.brake();
+        // }
 
         // delay to save resources
         pros::delay(10);
