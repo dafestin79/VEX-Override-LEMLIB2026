@@ -21,8 +21,8 @@ pros::MotorGroup right_motors({10, 14}, pros::v5::MotorGears::blue);
 pros::MotorGroup toggle_motors({6, -7}, pros::v5::MotorGears::green);
 // pros::Motor intake_motor(6, pros::v5::MotorGears::green);
 
-// Pneumatics -> | A - PORT, False - default state (retracted)
-pros::adi::Pneumatics clamp('A', false);
+// Pneumatics -> | A - PORT, False - default state (extended)
+pros::adi::Pneumatics clamp('A', true);
 // Elevator motors - ADJUST ports and gearset
 
 // Full Motors Group
