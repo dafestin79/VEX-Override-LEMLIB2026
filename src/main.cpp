@@ -193,7 +193,7 @@ void driveSkills() {
     right_motors.brake();
 }
 void autonomous() {
-    toggleSkills();
+    //toggleSkills();
 
     // for midfield drive skills
     // driveSkills();
