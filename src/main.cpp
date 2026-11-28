@@ -198,7 +198,7 @@ void toggleSkills() {
 void driveSkills() {
     left_motors.move(30);
     right_motors.move(30);
-    pros::delay(1500); // 1.5 seconds
+    pros::delay(2300); // 2.3 seconds
 
     left_motors.brake();
     right_motors.brake();
@@ -255,9 +255,9 @@ void opcontrol() {
         // 0.8 multipler scales down speed
 
         // Left stick UP/DOWN -> throttle 
-        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * 0.8;
+        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * 0.75;
         // Right stick LEFT/RIGHT -> turn 
-        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) * 0.8;
+        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) * 0.75;
 
         // arcade drive
         chassis.arcade(throttle, turn);
