@@ -301,25 +301,32 @@ void opcontrol() {
         //     }
         // }
 
-        // BACKUP ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-            full_motors.brake();
-        }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-            elevator_runu = !elevator_runu;
-            elevator_rund = false;
-        }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-            elevator_rund = !elevator_rund;
-            elevator_runu = false;
-        }
-        if (elevator_runu == true){
+        // BACKUP ELEVATOR CONTROL -> DOWN (L1) / UP (L2)
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
             full_motors.move(60);
-        } else if (elevator_rund == true){
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
             full_motors.move(-60);
         } else {
             full_motors.brake();
         }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+        //     full_motors.brake();
+        // }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+        //     elevator_runu = !elevator_runu;
+        //     elevator_rund = false;
+        // }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+        //     elevator_rund = !elevator_rund;
+        //     elevator_runu = false;
+        // }
+        // if (elevator_runu == true){
+        //     full_motors.move(60);
+        // } else if (elevator_rund == true){
+        //     full_motors.move(-60);
+        // } else {
+        //     full_motors.brake();
+        // }
        
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
         // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
