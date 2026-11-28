@@ -16,7 +16,9 @@ pros::MotorGroup left_motors({-1, -12}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_motors({10, 14}, pros::v5::MotorGears::blue);
 
 // TOGGLE motor
-pros::Motor toggle_motor(6, pros::v5::MotorGears::green);
+//pros::Motor toggle_motor(6, pros::v5::MotorGears::green);
+
+pros::MotorGroup toggle_motors({6, 7}, pros::v5::MotorGears::green);
 // pros::Motor intake_motor(6, pros::v5::MotorGears::green);
 
 // Pneumatics -> | A - PORT, False - default state (retracted)
@@ -105,7 +107,7 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
 	
 	// calibration is commented since no imu right now
-    // chassis.calibrate(); // calibrate sensors
+    //chassis.calibrate(); // calibrate sensors
 
     // print position to brain screen
     pros::Task screen_task([&]() {
@@ -125,7 +127,8 @@ void initialize() {
     half_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
     // Set brake mode for toggle
-    toggle_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // toggle_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    toggle_motors.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
     // Set elevator encoders to degrees
     full_motors.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
@@ -244,77 +247,78 @@ void opcontrol() {
         // Toggle control -> B Toggle
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
             // pros::lcd::print(4, "b pressed");
-            toggle_motor.move(40); // Move toggle motor
-            pros::lcd::print(4, "b pressed");
+            //toggle_motor.move(40); // Move toggle motor
+            toggle_motors.move(40); // Move toggle motors
         } else {
-            toggle_motor.brake(); // Stop toggle motor
+            //toggle_motor.brake(); // Stop toggle motor
+            toggle_motors.brake();
         }
 
-        // --- ELEVATOR LEVEL CONTROL ---
-        // L1 = UP, L2 = DOWN
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-            if (targetLevel < maxLevel) {
-                targetLevel++;
-                pros::lcd::print(3, "Selected Level: %d", targetLevel);
-            }
-        }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-            if (targetLevel > minLevel) {
-                targetLevel--;
-                pros::lcd::print(3, "Selected Level: %d", targetLevel);
-            }
-        }
+        // // --- ELEVATOR LEVEL CONTROL ---
+        // // L1 = UP, L2 = DOWN
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        //     if (targetLevel < maxLevel) {
+        //         targetLevel++;
+        //         pros::lcd::print(3, "Selected Level: %d", targetLevel);
+        //     }
+        // }
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+        //     if (targetLevel > minLevel) {
+        //         targetLevel--;
+        //         pros::lcd::print(3, "Selected Level: %d", targetLevel);
+        //     }
+        // }
 
-        // Start movement (Button A)
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-            if (targetLevel != currentLevel) {
-                //pros::lcd::print(4, "a pressed");
-                full_motors.move_absolute(levelPositions[targetLevel], 100);
-                isMoving = true;
-                moveTimer = 0; // Reset timer
-                pros::lcd::print(3, "Target Level: %d", targetLevel);
-            }
-        }
-
-        // BACKUP ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
+        // // Start movement (Button A)
         // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-        //     full_motors.brake();
-        // }
-        // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-        //     elevator_runu = !elevator_runu;
-        //     elevator_rund = false;
-        // }
-        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-        //     elevator_rund = !elevator_rund;
-        //     elevator_runu = false;
-        // }
-        // if (elevator_runu == true){
-        //     full_motors.move(127);
-        // } else if (elevator_rund == true){
-        //     full_motors.move(-127);
-        // } else {
-        //     full_motors.brake();
+        //     if (targetLevel != currentLevel) {
+        //         //pros::lcd::print(4, "a pressed");
+        //         full_motors.move_absolute(levelPositions[targetLevel], 100);
+        //         isMoving = true;
+        //         moveTimer = 0; // Reset timer
+        //         pros::lcd::print(3, "Target Level: %d", targetLevel);
+        //     }
         // }
 
         // Track motor
-        if (isMoving) {
-            double error = levelPositions[targetLevel] - full_motors.get_position();
-            moveTimer += 10; // Increse timer by 10ms to match delay at bottom of opcontrol loop
+        // if (isMoving) {
+        //     double error = levelPositions[targetLevel] - full_motors.get_position();
+        //     moveTimer += 10; // Increse timer by 10ms to match delay at bottom of opcontrol loop
 
-            // Check if within 10 degrees of target
-            if (fabs(error) < 10.0) {
-                full_motors.brake();
-                currentLevel = targetLevel; // Update current level
-                isMoving = false;
-                pros::lcd::print(3, "Level: %d", currentLevel);
-            } 
+        //     // Check if within 10 degrees of target
+        //     if (fabs(error) < 10.0) {
+        //         full_motors.brake();
+        //         currentLevel = targetLevel; // Update current level
+        //         isMoving = false;
+        //         pros::lcd::print(3, "Level: %d", currentLevel);
+        //     } 
 
-            // Timeout after 5 seconds
-            else if (moveTimer >= 5000) {
-                full_motors.brake();
-                isMoving = false;
-                pros::lcd::print(3, "elevator timeout");
-            }
+        //     // Timeout after 5 seconds
+        //     else if (moveTimer >= 5000) {
+        //         full_motors.brake();
+        //         isMoving = false;
+        //         pros::lcd::print(3, "elevator timeout");
+        //     }
+        // }
+
+        // BACKUP ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            full_motors.brake();
+        }
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+            elevator_runu = !elevator_runu;
+            elevator_rund = false;
+        }
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+            elevator_rund = !elevator_rund;
+            elevator_runu = false;
+        }
+        if (elevator_runu == true){
+            full_motors.move(60);
+        } else if (elevator_rund == true){
+            full_motors.move(-60);
+        } else {
+            full_motors.brake();
         }
        
         // HALF MOTORS CONTROL -> UP (UP BUTTON) / DOWN (DOWN BUTTON)
