@@ -232,7 +232,7 @@ void opcontrol() {
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-           piston_extended=!piston_extended; // toggle the piston state
+           piston_extended = !piston_extended; // toggle the piston state
            if (piston_extended==false) {
                 clamp.extend(); // extend the piston
            } else {
@@ -262,7 +262,17 @@ void opcontrol() {
             }
         }
 
-        // // FULL MOTORS CONTROL -> UP (L1) / DOWN (L2)
+        // Start movement (Button A)
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            if (targetLevel != currentLevel) {
+                full_motors.move_absolute(levelPositions[targetLevel], 100);
+                isMoving = true;
+                moveTimer = 0; // Reset timer
+                pros::lcd::print(3, "Target Level: %d", targetLevel);
+            }
+        }
+
+        // ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
         // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
         //     elevator_runu = !elevator_runu;
         //     elevator_rund = false;
@@ -279,20 +289,10 @@ void opcontrol() {
         //     full_motors.brake();
         // }
 
-        // Start movement (Button A)
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-            if (targetLevel != currentLevel) {
-                full_motors.move_absolute(levelPositions[targetLevel], 100);
-                isMoving = true;
-                moveTimer = 0; // Reset timer
-                pros::lcd::print(3, "Target Level: %d", targetLevel);
-            }
-        }
-
         // Track motor
         if (isMoving) {
             double error = levelPositions[targetLevel] - full_motors.get_position();
-            moveTimer += 10; // Increse timer by 10ms
+            moveTimer += 10; // Increse timer by 10ms to match delay at bottom of opcontrol loop
 
             // Check if within 10 degrees of target
             if (fabs(error) < 10.0) {
@@ -306,7 +306,7 @@ void opcontrol() {
             else if (moveTimer >= 5000) {
                 full_motors.brake();
                 isMoving = false;
-                pros::lcd::print(3, "elevator timeout!");
+                pros::lcd::print(3, "elevator timeout");
             }
         }
        
