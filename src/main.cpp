@@ -184,8 +184,19 @@ void toggleSkills() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+void driveSkills() {
+    left_motors.move(30);
+    right_motors.move(30);
+    pros::delay(200);
+
+    left_motors.brake();
+    right_motors.brake();
+}
 void autonomous() {
     toggleSkills();
+
+    // for midfield drive skills
+    // driveSkills();
 }
 // UNTUNED -> CHECK LATER
 // 360 degrees -> One motor rotation
