@@ -97,12 +97,12 @@ void on_center_button() {
 	// } else {
 	// 	pros::lcd::clear_line(2);
 	// }
-    autonMode = (autonMode == 0) ? 1 : 0; // Flip between 0 and 1
-    if (autonMode == 0) {
-        pros::lcd::set_text(5, "MATCH AUTON (15s)");
-    } else {
-        pros::lcd::set_text(5, "SKILLS AUTON (60s)");
-    }
+    // autonMode = (autonMode == 0) ? 1 : 0; // Flip between 0 and 1
+    // if (autonMode == 0) {
+    //     pros::lcd::set_text(5, "MATCH AUTON (15s)");
+    // } else {
+    //     pros::lcd::set_text(5, "SKILLS AUTON (60s)");
+    // }
 }
 
 /**
@@ -114,8 +114,8 @@ void on_center_button() {
 // initialize function. Runs on program startup
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    pros::lcd::register_btn1_cb(on_center_button); // Center button toggles mode
-    pros::lcd::set_text(5, "MODE: MATCH AUTON (15s)");
+    // pros::lcd::register_btn1_cb(on_center_button); // Center button toggles mode
+    // pros::lcd::set_text(5, "MODE: MATCH AUTON (15s)");
 	
 	// calibration is commented since no imu right now
     //chassis.calibrate(); // calibrate sensors
@@ -204,15 +204,15 @@ void driveSkills() {
     right_motors.brake();
 }
 void autonomous() {
-    if (autonMode == 0) {
-        // toggleSkills();
-    } else {
-        driveSkills();
-    }
+    // if (autonMode == 0) {
+    //     // toggleSkills();
+    // } else {
+    //     driveSkills();
+    // }
     //toggleSkills();
 
     // for midfield drive skills
-    // driveSkills();
+    driveSkills();
 }
 // UNTUNED -> CHECK LATER
 // 360 degrees -> One motor rotation
@@ -252,10 +252,12 @@ void opcontrol() {
     bool piston_extended=false;
 
 	while (true) {
+        // 0.8 multipler scales down speed
+        
         // Left stick UP/DOWN -> throttle 
-        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) * 0.8;
         // Right stick LEFT/RIGHT -> turn 
-        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) * 0.8;
 
         // arcade drive
         chassis.arcade(throttle, turn);
