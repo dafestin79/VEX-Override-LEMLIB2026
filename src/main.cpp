@@ -232,7 +232,7 @@ void opcontrol() {
 
         // PNEUMATICS CONTROL -> Y Toggle
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-            pros::lcd::print(4, "y pressed: %d", targetLevel);
+            pros::lcd::print(4, "y pressed");
             piston_extended = !piston_extended; // toggle the piston state
             if (piston_extended==false) {
                     clamp.extend(); // extend the piston
@@ -243,7 +243,7 @@ void opcontrol() {
 
         // Toggle control -> B Toggle
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-            pros::lcd::print(4, "b pressed: %d", targetLevel);
+            pros::lcd::print(4, "b pressed");
             toggle_motor.move(40); // Move toggle motor
         } else {
             toggle_motor.brake(); // Stop toggle motor
@@ -254,14 +254,12 @@ void opcontrol() {
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
             if (targetLevel < maxLevel) {
                 targetLevel++;
-                pros::lcd::print(4, "l1 pressed: %d", targetLevel);
                 pros::lcd::print(3, "Selected Level: %d", targetLevel);
             }
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
             if (targetLevel > minLevel) {
                 targetLevel--;
-                pros::lcd::print(4, "l2 pressed: %d", targetLevel);
                 pros::lcd::print(3, "Selected Level: %d", targetLevel);
             }
         }
@@ -269,7 +267,7 @@ void opcontrol() {
         // Start movement (Button A)
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             if (targetLevel != currentLevel) {
-                pros::lcd::print(4, "a pressed: %d", targetLevel);
+                pros::lcd::print(4, "a pressed");
                 full_motors.move_absolute(levelPositions[targetLevel], 100);
                 isMoving = true;
                 moveTimer = 0; // Reset timer
