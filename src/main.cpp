@@ -153,20 +153,20 @@ void competition_initialize() {}
 
 void toggleSkills() {
     // Drive forward
-    left_motors.move(50);
-    right_motors.move(50);
+    left_motors.move(30);
+    right_motors.move(30);
     pros::delay(100);
     // Drive back into toggle
-    left_motors.move(-50);
-    right_motors.move(-50);
+    left_motors.move(-30);
+    right_motors.move(-30);
     pros::delay(100);
     // Drive forward 
-    left_motors.move(50);
-    right_motors.move(50);
+    left_motors.move(30);
+    right_motors.move(30);
     pros::delay(100);
     // Drive back into toggle
-    left_motors.move(-50);
-    right_motors.move(-50);
+    left_motors.move(-30);
+    right_motors.move(30);
     pros::delay(100);
 }
 
