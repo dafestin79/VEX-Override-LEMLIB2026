@@ -24,7 +24,7 @@ pros::adi::Pneumatics clamp('A', false);
 // Elevator motors - ADJUST ports and gearset
 
 // Full Motors Group
-pros::MotorGroup full_motors({17, 20}, pros::v5::MotorGears::green);
+pros::MotorGroup full_motors({17, -20}, pros::v5::MotorGears::green);
 
 // Half Motors Group 
 pros::MotorGroup half_motors({18, -19}, pros::v5::MotorGears::green);
@@ -186,7 +186,7 @@ void autonomous() {
 }
 // UNTUNED -> CHECK LATER
 // 360 degrees -> One motor rotation
-const double levelPositions[4] = {0, 360, 720, 1080};
+const double levelPositions[4] = {0, 360, 720};
 
 void moveElevator(int destination) {
     // Move full_motors to the level w/ 100 RPM
@@ -210,7 +210,7 @@ void opcontrol() {
 	int currentLevel = 0; // Where the elevator is right now (0 to 3)
     int targetLevel = 0; // The level to go to (0 to 3)
     const int minLevel = 0; // Min level
-    const int maxLevel = 3; // Max level
+    const int maxLevel = 2; // Max level
 
     bool isMoving = false;
     int moveTimer = 0;
@@ -272,7 +272,10 @@ void opcontrol() {
             }
         }
 
-        // ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
+        // BACKUP ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
+        // if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+        //     full_motors.brake();
+        // }
         // if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
         //     elevator_runu = !elevator_runu;
         //     elevator_rund = false;
