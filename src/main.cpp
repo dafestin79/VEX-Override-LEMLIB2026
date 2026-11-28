@@ -80,6 +80,9 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         sensors // odometry sensors
 );
 
+// 0 -> match auton, 1 -> skills auton
+int autonMode = 0;
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -87,13 +90,19 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
  * "I was pressed!" and nothing.
  */
 void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
+	// static bool pressed = false;
+	// pressed = !pressed;
+	// if (pressed) {
+	// 	pros::lcd::set_text(2, "I was pressed!");
+	// } else {
+	// 	pros::lcd::clear_line(2);
+	// }
+    autonMode = (autonMode == 0) ? 1 : 0; // Flip between 0 and 1
+    if (autonMode == 0) {
+        pros::lcd::set_text(5, "MATCH AUTON (15s)");
+    } else {
+        pros::lcd::set_text(5, "SKILLS AUTON (60s)");
+    }
 }
 
 /**
@@ -105,6 +114,8 @@ void on_center_button() {
 // initialize function. Runs on program startup
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
+    pros::lcd::register_btn1_cb(on_center_button); // Center button toggles mode
+    pros::lcd::set_text(5, "MODE: MATCH AUTON (15s)");
 	
 	// calibration is commented since no imu right now
     //chassis.calibrate(); // calibrate sensors
@@ -193,6 +204,11 @@ void driveSkills() {
     right_motors.brake();
 }
 void autonomous() {
+    if (autonMode == 0) {
+        // toggleSkills();
+    } else {
+        driveSkills();
+    }
     //toggleSkills();
 
     // for midfield drive skills
