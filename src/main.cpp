@@ -18,7 +18,7 @@ pros::MotorGroup right_motors({10, 14}, pros::v5::MotorGears::blue);
 // TOGGLE motor
 //pros::Motor toggle_motor(6, pros::v5::MotorGears::green);
 
-pros::MotorGroup toggle_motors({6, 7}, pros::v5::MotorGears::green);
+pros::MotorGroup toggle_motors({6, -7}, pros::v5::MotorGears::green);
 // pros::Motor intake_motor(6, pros::v5::MotorGears::green);
 
 // Pneumatics -> | A - PORT, False - default state (retracted)
@@ -249,6 +249,8 @@ void opcontrol() {
             // pros::lcd::print(4, "b pressed");
             //toggle_motor.move(40); // Move toggle motor
             toggle_motors.move(40); // Move toggle motors
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+            toggle_motors.move(-40); // Move toggle motor reverse
         } else {
             //toggle_motor.brake(); // Stop toggle motor
             toggle_motors.brake();
@@ -301,11 +303,11 @@ void opcontrol() {
         //     }
         // }
 
-        // BACKUP ELEVATOR CONTROL -> DOWN (L1) / UP (L2)
+        // BACKUP ELEVATOR CONTROL -> UP (L1) / DOWN (L2)
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-            full_motors.move(60);
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
             full_motors.move(-60);
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+            full_motors.move(60);
         } else {
             full_motors.brake();
         }
